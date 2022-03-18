@@ -40,18 +40,18 @@ Solidity中智能合约的含义就是一组代码（它的 *功能* )和数据�
 
 该合约能完成的事情并不多（由于以太坊构建的基础架构的原因）：它能允许任何人在合约中存储一个单独的数字，并且这个数字可以被世界上任何人访问，且没有可行的办法阻止你发布这个数字。当然，任何人都可以再次调用 ``set`` ，传入不同的值，覆盖你的数字，但是这个数字仍会被存储在区块链的历史记录中。随后，我们会看到怎样施加访问限制，以确保只有你才能改变这个数字。
 
-.. note::
-    所有的标识符（合约名称，函数名称和变量名称）都只能使用ASCII字符集。UTF-8编码的数据可以用字符串变量的形式存储。
-
 .. warning::
-    小心使用Unicode文本，因为有些字符虽然长得相像（甚至一样），但其字符码是不同的，其编码后的字符数组也会不一样。
+    要小心使用Unicode文本，因为有些字符虽然长得相像（甚至一样），但其字符码可能是不同的，因此编码后的字符数组也会不一样。
+    
+.. note::
+    所有的标识符（合约名称，函数名称和变量名称）都只能使用ASCII字符集。但可以在字符串变量中存储UTF-8编码的数据。
 
 .. index:: ! subcurrency
 
 货币合约（Subcurrency）示例
 ==============================
 
-下面的合约实现了一个最简单的加密货币。这里，币确实可以无中生有地产生，但是只有创建合约的人才能做到（实现一个不同的发行计划也不难）。而且，任何人都可以给其他人转币，不需要注册用户名和密码 —— 所需要的只是以太坊密钥对。
+下面的合约实现了一个最简单的加密货币。该合约只允许其创建者创建新币（实现一个不同的发行计划也不难）。而且，任何人都可以给其他人转币，不需要注册用户名和密码 —— 所需要的只是以太坊密钥对。
 ::
     // SPDX-License-Identifier: GPL-3.0
     pragma solidity  >=0.7.0 <0.9.0;
@@ -85,7 +85,9 @@ Solidity中智能合约的含义就是一组代码（它的 *功能* )和数据�
 
 这个合约引入了一些新的概念，让我们逐一解读。
 
-``address public minter;`` 这一行声明了一个可以被公开访问的 ``address`` 类型的状态变量。 ``address`` 类型是一个160位的值，且不允许任何算数操作。这种类型适合存储合约地址或外部人员的密钥对。关键字 ``public`` 自动生成一个函数，允许你在这个合约之外访问这个状态变量的当前值。如果没有这个关键字，其他的合约没有办法访问这个变量。由编译器生成的函数的代码大致如下所示（暂时忽略 external 和 view）：
+``address public minter;`` 这一行声明了一个可以被公开访问的 ``address`` 类型的状态变量。 ``address`` 类型是一个160位的值，且不允许任何算数操作。这种类型适合存储合约地址或者是外部账号的密钥对中的公共部分的哈希值。
+
+关键字 ``public`` 会自动生成一个函数，允许你在这个合约之外访问这个状态变量的当前值。如果没有这个关键字，其他的合约没有办法访问这个变量。由编译器生成的函数的代码大致如下所示（暂时忽略 external 和 view）：
 ::
 
     function minter() external view returns (address) { return minter; }
@@ -94,9 +96,11 @@ Solidity中智能合约的含义就是一组代码（它的 *功能* )和数据�
 
 .. index:: mapping
 
-下一行， ``mapping (address => uint) public balances;`` 也创建一个公共状态变量，但它是一个更复杂的数据类型。
-该类型将address映射为无符号整数。
-Mappings 可以看作是一个 `哈希表 <https://en.wikipedia.org/wiki/Hash_table>`_ 它会执行虚拟初始化，以使所有可能存在的键都映射到一个字节表示为全零的值。 但是，这种类比并不太恰当，因为它既不能获得映射的所有键的列表，也不能获得所有值的列表。 因此，要么记住你添加到mapping中的数据（使用列表或更高级的数据类型会更好），要么在不需要键列表或值列表的上下文中使用它，就如本例。 而由 ``public`` 关键字创建的getter函数 :ref:`getter function<getter-functions>` 则是更复杂一些的情况， 它大致如下所示：
+下一行， ``mapping (address => uint) public balances;`` 也创建一个公共状态变量，但它是一个更复杂的数据类型。该类型将address映射为无符号整数。
+
+Mappings 可以看作是一个 `哈希表 <https://en.wikipedia.org/wiki/Hash_table>`_ 它会执行虚拟初始化，以使所有可能存在的键都映射到一个字节上，其值表示为全零。 但是，这种类比并不太恰当，因为它既不能获得映射的所有键的列表，也不能获得所有值的列表。 因此，要么记住你添加到mapping中的数据（使用列表或更高级的数据类型会更好），要么在不需要键列表或值列表的上下文中使用它，就如本例。 
+
+而由 ``public`` 关键字创建的getter函数 :ref:`getter function<getter-functions>` 则是更复杂一些的情况， 它大致如下所示：
 ::
 
     function balances(address _account) external view returns (uint) {
@@ -107,7 +111,9 @@ Mappings 可以看作是一个 `哈希表 <https://en.wikipedia.org/wiki/Hash_ta
 
 .. index:: event
 
-``event Sent(address from, address to, uint amount);`` 这行声明了一个所谓的“事件（event）”，它会在 ``send`` 函数的最后一行被发出。用户界面（当然也包括服务器应用程序）可以监听区块链上正在发送的事件，而不会花费太多成本。一旦它被发出，监听该事件的listener都将收到通知。而所有的事件都包含了 ``from`` ， ``to`` 和 ``amount`` 三个参数，可方便追踪交易。 为了监听这个事件，你可以使用如下JavaScript代码（假设 Coin 是已经通过 `web3.js 创建好的合约对象 <https://learnblockchain.cn/docs/web3js-0.2x/web3.eth.html#contract>`_ ）：
+``event Sent(address from, address to, uint amount);`` 这行声明了一个所谓的“事件（event）”，它会在 ``send`` 函数的最后一行被发出。以太坊客户端（如网络应用）可以监听区块链上这些正在发送的事件，且不会花费太多的成本。事件一旦发出，监听该事件的listener都将收到参数``from``, ``to`` 和 ``amount``， 这使得跟踪交易成为可能。 
+
+为了监听这个事件，你可以使用如下JavaScript代码（假设 Coin 是已经通过 `web3.js 创建好的合约对象 <https://learnblockchain.cn/docs/web3js-0.2x/web3.eth.html#contract>`_ ）：
 ::
 
     Coin.Sent().watch({}, '', function(error, result) {
