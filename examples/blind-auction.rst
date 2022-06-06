@@ -30,7 +30,7 @@
         address payable public beneficiary;
         // 时间是unix的绝对时间戳（自1970-01-01以来的秒数）
         // 或以秒为单位的时间段。
-        uint public auctionEnd;
+        uint public auctionEndTime;
 
         // 拍卖的当前状态
         address public highestBidder;
