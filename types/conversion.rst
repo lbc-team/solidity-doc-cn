@@ -174,4 +174,4 @@
 
 从 ``bytes20`` 或其他整型显示转换为 ``address`` 类型时，都会作为 ``address payable`` 类型。
 
-一个地址 ``address a`` 可以通过``payable(a)``　转换为　 ``address payable``  类型.
+一个地址 ``address a`` 可以通过 ``payable(a)``　转换为　 ``address payable``  类型.
