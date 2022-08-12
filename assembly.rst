@@ -109,7 +109,7 @@ efficient code, for example:
                 for
                     { let end := add(dataElementLocation, mul(len, 0x20)) }
                     lt(dataElementLocation, end)
-                    { data := add(dataElementLocation, 0x20) }
+                    { dataElementLocation := add(dataElementLocation, 0x20) }
                 {
                     sum := add(sum, mload(dataElementLocation))
                 }
