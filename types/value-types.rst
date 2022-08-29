@@ -189,12 +189,13 @@
  - ``address``：保存一个20字节的值（以太坊地址的大小）。
  - ``address payable`` ：可支付地址，与 ``address`` 相同，不过有成员函数 ``transfer`` 和 ``send`` 。
 
-这种区别背后的思想是 ``address payable`` 可以向其发送以太币，而不能先一个普通的 ``address`` 发送以太币，例如，它可能是一个智能合约地址，并且不支持接收以太币。
+这种区别背后的思想是 ``address payable`` 可以向其发送以太币，而不能向一个普通的 ``address`` 发送以太币，例如，它可能是一个智能合约地址，并且不支持接收以太币。
 
 
 类型转换:
 
 允许从 ``address payable`` 到 ``address`` 的隐式转换，而从 ``address`` 到 ``address payable`` 必须显示的转换, 通过 ``payable(<address>)`` 进行转换。
+
 .. note::
   
     在0.5版本,执行这种转换的唯一方法是使用中间类型，先转换为 ``uint160`` 如,  address payable ap = address(uint160(addr)); 
