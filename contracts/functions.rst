@@ -265,7 +265,7 @@ receive 接收以太函数
 ``receive() external payable { ... }``
 
 不需要 ``function`` 关键字，也没有参数和返回值并且必须是　``external``　可见性和　``payable`` 修饰．
-它可以是 ``virtual`` 的，可以被重载也可以有 |modifier| 。
+它可以是 ``virtual`` 的，可以被重写也可以有 |modifier| 。
 
 在对合约没有任何附加数据调用（通常是对合约转账）是会执行 ``receive`` 函数．　例如　通过 ``.send()`` or ``.transfer()``
 如果 ``receive`` 函数不存在，　但是有payable　的 :ref:`fallback 回退函数 <fallback-function>`　
@@ -318,7 +318,7 @@ Fallback 回退函数
 
 合约可以最多有一个回退函数。函数声明为： ``fallback () external [payable]`` 或 ``fallback (bytes calldata input) external [payable] returns (bytes memory output)`` 
 
-没有　``function``　关键字。　必须是　``external``　可见性，它可以是 ``virtual`` 的，可以被重载也可以有 |modifier| 。
+没有　``function``　关键字。　必须是　``external``　可见性，它可以是 ``virtual`` 的，可以被重写也可以有 |modifier| 。
 
 
 如果在一个对合约调用中，没有其他函数与给定的函数标识符匹配fallback会被调用．
