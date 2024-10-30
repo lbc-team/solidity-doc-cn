@@ -24,7 +24,7 @@ import re
 def setup(sphinx):
     sys.path.insert(0, os.path.abspath('./utils'))
     from SolidityLexer import SolidityLexer
-    sphinx.add_lexer('Solidity', SolidityLexer())
+    sphinx.add_lexer('Solidity', SolidityLexer)
 
 
 
