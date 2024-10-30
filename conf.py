@@ -28,8 +28,8 @@ ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.insert(0, os.path.join(ROOT_PATH, 'ext'))
 
 def setup(sphinx):
-    sphinx.add_lexer('Solidity', SolidityLexer())
-    sphinx.add_lexer('Yul', YulLexer())
+    sphinx.add_lexer('Solidity', SolidityLexer)
+    sphinx.add_lexer('Yul', YulLexer)
 
     sphinx.add_css_file('css/custom.css')
 
